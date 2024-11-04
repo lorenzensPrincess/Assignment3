@@ -1,0 +1,108 @@
+import csv
+from datetime import datetime
+
+class InventoryItem:
+    def __init__(self, name, quantity, location, last_maintenance, serial_number, category):
+        self.name = name
+        self.quantity = quantity
+        self.location = location
+        self.last_maintenance = last_maintenance
+        self.serial_number = serial_number
+        self.category = category
+
+class InventoryManager:
+    def __init__(self):        
+        self.inventory = []
+
+    def add_item(self):
+        try:
+            name = input("Enter item name: ")
+            quantity = int(input("Enter quantity (numbers only): "))  # A user-friendly prompt for quantity has been added
+            location = input("Enter location: ")
+            last_maintenance = input("Enter last maintenance date (YYYY-MM-DD): ")
+            serial_number = input("Enter serial number: ")
+            category = input("Enter category: ")
+            
+            new_item = InventoryItem(name, quantity, location, last_maintenance, serial_number, category)
+            self.inventory.append(new_item)
+            print(f"Item '{name}' added successfully!\n")
+        except ValueError:
+            print("Error: Quantity must be a number. Please try again with a valid input.\n")  # A clearer error message will be sent now
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}\n")
+
+    def update_item(self):
+        serial_number = input("Enter serial number of the item to update: ")
+        found = False
+        for item in self.inventory:
+            if item.serial_number == serial_number:
+                found = True
+                print(f"Updating item: {item.name}")
+                try:
+                    item.quantity = int(input("Enter new quantity (numbers only): "))  # The quantity input is clarified
+                    item.location = input("Enter new location: ")
+                    item.last_maintenance = input("Enter new last maintenance date (YYYY-MM-DD): ")
+                    print("Item updated successfully!\n")
+                except ValueError:
+                    print("Error: Quantity must be a number. Please enter a valid number.\n")  # Clearer error message will be sent to the user
+                except Exception as e:
+                    print(f"An unexpected error occurred: {e}\n")
+                break
+        
+        if not found:
+            print(f"No item found with serial number {serial_number}. Please double-check the serial number.\n")  # The feedback has been enhanced
+
+    def remove_item(self):
+        serial_number = input("Enter serial number of the item to remove: ")
+        found = False
+        for item in self.inventory:
+            if item.serial_number == serial_number:
+                self.inventory.remove(item)
+                print(f"Item '{item.name}' removed successfully!\n")
+                found = True
+                break
+        
+        if not found:
+            print(f"No item found with serial number {serial_number}. Check the serial number and try again.\n")  # The feedback has been enhanced, making it easy for the user to understnad 
+
+    def generate_report(self):
+        try:
+            with open('inventory_report.csv', mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["Name", "Quantity", "Location", "Last Maintenance Date", "Serial Number", "Category"])
+                for item in self.inventory:
+                    writer.writerow([item.name, item.quantity, item.location, item.last_maintenance, item.serial_number, item.category])
+            print("Inventory report generated successfully as 'inventory_report.csv'.\n")
+        except Exception as e:
+            print(f"Error generating report: {e}\n")
+
+def main():
+    manager = InventoryManager()
+    
+    while True:
+        # Display of menu options
+        print("Inventory Management System")
+        print("1. Add Item")
+        print("2. Update Item")
+        print("3. Remove Item")
+        print("4. Generate Report")
+        print("5. Exit")
+        
+        choice = input("Enter your choice (1-5): ")
+        
+        if choice == '1':
+            manager.add_item()
+        elif choice == '2':
+            manager.update_item()
+        elif choice == '3':
+            manager.remove_item()
+        elif choice == '4':
+            manager.generate_report()
+        elif choice == '5':
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid choice. Please enter a number between 1 and 5.\n")  # Enhanced feedback for invalid choice from the user
+
+# Jump back to the main program and run it. kh
+main()

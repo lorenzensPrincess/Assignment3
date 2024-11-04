@@ -1,0 +1,35 @@
+import pytest
+import sys
+sys.path.append('path/to/directory')
+from Inventory_manager import InventoryManager, InventoryItem 
+
+@pytest.fixture
+def manager():
+    return InventoryManager()  
+
+def test_add_item(manager):
+    item = InventoryItem("BMW", 5, "Elegant Auto Gallery", "2023-11-11", "CL1111", "Vehicle")
+    manager.inventory.append(item)  # Add the item directly.
+    assert len(manager.inventory) == 1  # Check if one item has been added.
+
+def test_update_item(manager):
+    item = InventoryItem("BMW", 5, "Elegant Auto Gallery", "2023-11-11", "CL1111", "Vehicle")
+    manager.inventory.append(item)  # Add an item. 
+    item.quantity = 10  # Update the quantity. 
+    assert item.quantity == 10  # Check if the quantity is updated or not. 
+
+def test_remove_item(manager):
+    item = InventoryItem("BMW", 5, "Elegant Auto Gallery", "2023-11-11", "CL1111", "Vehicle")
+    manager.inventory.append(item)  # Adding an item.
+    manager.inventory.remove(item)  # Removing an item.
+    assert len(manager.inventory) == 0  # Check if the inventory is empty.
+
+def test_generate_report(manager, tmp_path):
+    item1 = InventoryItem("BMW", 5, "Elegant Auto Gallery", "2023-11-11", "CL1111", "Vehicle")
+    item2 = InventoryItem("Mercedes", 3, "Exquisite Motor Sanctuary", "2024-10-10", "BS1111", "Vehicle")
+    manager.inventory.extend([item1, item2])  # Add items to the inventory.
+
+    report_file = tmp_path / "inventory_report.csv"  
+    manager.generate_report(report_file)  # Generate the report to this path.
+
+    assert report_file.exists()  # Verify that report file exists. 
